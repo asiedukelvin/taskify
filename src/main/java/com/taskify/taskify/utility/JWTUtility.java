@@ -11,7 +11,7 @@ import java.util.Map;
 @Service
 public class JWTUtility {
 
-    private static final String SECRET_KEY = "U3VwZXJTZWNyZXRLZXlGb3JUYXNraWZ5QXBwMTIzIQ==";
+    private static final String SECRET_KEY = "U3VwZXJTZWNyZXRLZXlGb3JUYXNraWZ5QXBwMTIzIQ==   nk";
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 hours
