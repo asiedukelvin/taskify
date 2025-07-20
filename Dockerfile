@@ -1,5 +1,5 @@
 # Stage 1: Build the app with Gradle and JDK 24
-FROM gradle:8.7.0-jdk17 AS builder
+FROM gradle:8.14.3-jdk24 AS builder
 WORKDIR /app
 COPY . .
 RUN gradle clean build -x test
