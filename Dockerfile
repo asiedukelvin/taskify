@@ -1,14 +1,12 @@
-# Use OpenJDK base image
-FROM eclipse-temurin:24-jdk
-
-# Set working directory
+# Stage 1: Build the app with Gradle and JDK 24
+FROM gradle:8.7.0-jdk24 AS builder
 WORKDIR /app
+COPY . .
+RUN gradle clean build -x test
 
-# Copy built jar file into container
+# Stage 2: Run the app with JDK 24
+FROM eclipse-temurin:24-jdk
+WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
-
-# Expose port (optional, for local dev)
 EXPOSE 8080
-
-# Run the JAR
 ENTRYPOINT ["java", "-jar", "app.jar"]
