@@ -5,7 +5,7 @@ FROM eclipse-temurin:24-jdk
 WORKDIR /app
 
 # Copy built jar file into container
-COPY target/*.jar app.jar
+COPY build/libs/*.jar app.jar
 
 # Expose port (optional, for local dev)
 EXPOSE 8080
