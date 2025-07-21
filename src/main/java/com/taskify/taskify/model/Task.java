@@ -12,23 +12,25 @@ public class Task {
     private String id;
 
     private String title;
-    private String description;
+    private String notes;
     private Boolean completed;
     private LocalDateTime dueDate;
     private String taskListId;
     private Boolean important;
+    private Boolean myDay;
 
     // Constructors
     public Task() {
         this.completed = false; // Default
     }
 
-    public Task(String title, String description, LocalDateTime dueDate, String taskListId) {
+    public Task(String title, String notes, LocalDateTime dueDate, String taskListId, Boolean completed, Boolean myDay) {
         this.title = title;
-        this.description = description;
+        this.notes = notes;
         this.dueDate = dueDate;
         this.taskListId = taskListId;
-        this.completed = false;
+        this.completed = completed;
+        this.myDay = myDay;
     }
 
     // Getters and Setters
@@ -44,12 +46,12 @@ public class Task {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public Boolean getCompleted() {
@@ -85,4 +87,8 @@ public class Task {
     }
 
     public void setImportant(Boolean important) {this.important = important;}
+
+    public Boolean getMyDay() { return myDay; }
+
+    public void setMyDay(Boolean myDay) { this.myDay = myDay; }
 }

@@ -1,15 +1,15 @@
 
 package com.taskify.taskify.controller;
 
-import java.util.List;
+import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import com.taskify.taskify.model.User;
 import com.taskify.taskify.service.UserService;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("auth")
@@ -22,8 +22,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
+    public ResponseEntity<User> createUser(@RequestBody User user, @RequestBody MultipartFile file) throws IOException {
+        User createdUser = userService.createUser(user, file);
         return ResponseEntity.ok(createdUser);
     }
 
@@ -35,17 +35,5 @@ public class AuthController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
-    }
-
-
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable String id) {
-        return userService.getUserById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable String id) {
-        userService.deleteUser(id);
     }
 }
