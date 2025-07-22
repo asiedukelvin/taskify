@@ -20,11 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserService {
     private final UserRepository userRepo;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final JWTUtility jwtUtil = new JWTUtility();
+    private final JWTUtility jwtUtil;
 
 
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, JWTUtility jwtUtil) {
         this.userRepo = userRepo;
+        this.jwtUtil = jwtUtil;
     }
 
     public User createUser(User user, MultipartFile file) throws IOException {
