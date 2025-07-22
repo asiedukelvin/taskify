@@ -13,14 +13,14 @@ import java.util.function.Function;
 
 @Service
 public class JWTUtility {
+    private final Key key;
+    private final long EXPIRATION_TIME;
 
-    @Value("${jwt.secret}")
-    private static String SECRET_KEY;
-
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-
-    @Value("${jwt.expiration}")
-    private long EXPIRATION_TIME; // 24 hours
+    public JWTUtility(@Value("${jwt.secret}") String secret,
+                      @Value("${jwt.expiration}") long expirationTime) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.EXPIRATION_TIME = expirationTime;
+    }
 
     public String generateToken(String userId, Map<String, Object> extraClaims) {
         return Jwts.builder()
