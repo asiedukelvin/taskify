@@ -1,12 +1,10 @@
 package com.taskify.taskify.service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.taskify.taskify.utility.FileUploadUtility;
 import com.taskify.taskify.utility.JWTUtility;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.taskify.taskify.model.User;
 import com.taskify.taskify.repository.UserRepository;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserService {
@@ -28,15 +25,13 @@ public class UserService {
         this.jwtUtil = jwtUtil;
     }
 
-    public User createUser(User user, MultipartFile file) throws IOException {
+    public User createUser(User user) {
         if (userRepo.findByEmail(user.getEmail()) != null) {
             throw new IllegalArgumentException("User with email already exists.");
         }
-        String imagePath = FileUploadUtility.saveFile(file);
         String rawPassword = user.getPassword();
         String hashedPassword = passwordEncoder.encode(rawPassword);
         user.setPassword(hashedPassword);
-        user.setProfilePic(imagePath);
         System.out.println("Created user: " + user.getEmail());
         return userRepo.save(user);
     }
