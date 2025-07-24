@@ -19,6 +19,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("public/**").permitAll()
                         .requestMatchers("/api/tasks/**").authenticated()
                         .requestMatchers("/api/tasklists/**").authenticated()
                         .requestMatchers("/api/users/**").authenticated()
