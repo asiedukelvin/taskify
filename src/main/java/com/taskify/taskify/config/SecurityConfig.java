@@ -18,13 +18,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                       /* .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("public/**").permitAll()
                         .requestMatchers("/api/uploads/**").permitAll()
                         .requestMatchers("/api/profilepic/**").permitAll()
                         .requestMatchers("/api/tasks/**").authenticated()
                         .requestMatchers("/api/tasklists/**").authenticated()
-                        .requestMatchers("/api/users/**").authenticated()
+                        .requestMatchers("/api/users/**").authenticated()*/
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
