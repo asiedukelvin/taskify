@@ -16,10 +16,11 @@ public class TaskListController {
         this.service = service;
     }
 
-    @PostMapping
+    @PutMapping
     public ResponseEntity<TaskList> create(@RequestBody TaskList list) {
         return ResponseEntity.ok(service.create(list));
     }
+
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<TaskList>> getByUser(@PathVariable String userId) {
@@ -32,3 +33,4 @@ public class TaskListController {
         return ResponseEntity.noContent().build();
     }
 }
+

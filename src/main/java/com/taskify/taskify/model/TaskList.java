@@ -1,7 +1,10 @@
 package com.taskify.taskify.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Document("tasklists")
 public class TaskList {
@@ -11,6 +14,17 @@ public class TaskList {
 
     private String title;
     private String userId;
+
+    @Transient
+    private List<Task> tasks;
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
 
     // Constructors
     public TaskList() {}

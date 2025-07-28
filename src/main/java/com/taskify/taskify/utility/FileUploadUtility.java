@@ -5,43 +5,50 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.UUID;
 
 public class FileUploadUtility {
 
-    public static String saveFile(MultipartFile file) throws IOException {
+    public static class FileUploadResult {
+        public final String path;
+        public final String base64;
+
+        public FileUploadResult(String path, String base64) {
+            this.path = path;
+            this.base64 = base64;
+        }
+    }
+
+    public static FileUploadResult saveFile(MultipartFile file) throws IOException {
         String uploadDir = "uploads/";
 
-        // Null and empty check for file
         if (file == null || file.isEmpty()) {
             throw new IOException("Cannot upload empty file.");
         }
 
-        // Clean and sanitize filename
         String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         if (originalFileName.contains("..") || originalFileName.contains("/") || originalFileName.contains("\\")) {
             throw new IOException("Invalid file name: " + originalFileName);
         }
 
-        // Replace any sketchy characters just in case
         String safeFileName = UUID.randomUUID() + "-" + originalFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
-
-        // Normalize and secure the upload path
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         Files.createDirectories(uploadPath);
-
         Path targetPath = uploadPath.resolve(safeFileName).normalize();
 
-        // Path traversal protection
         if (!targetPath.toAbsolutePath().startsWith(uploadPath)) {
             throw new IOException("Attempt to store file outside designated directory.");
         }
 
-        // Save the file
-        //noinspection JvmTaintAnalysis
-        Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+        byte[] fileBytes = file.getBytes(); // Get file as byte[]
+        Files.write(targetPath, fileBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
-        return "/uploads/" + safeFileName;
+        String base64 = Base64.getEncoder().encodeToString(fileBytes);
+        String mimeType = Files.probeContentType(targetPath);
+        String dataUri = "data:" + (mimeType != null ? mimeType : "application/octet-stream") + ";base64," + base64;
+
+        return new FileUploadResult("/uploads/" + safeFileName, dataUri);
     }
 }
