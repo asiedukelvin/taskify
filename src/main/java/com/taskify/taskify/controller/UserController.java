@@ -42,7 +42,11 @@ public class UserController {
     }
 
     @PutMapping("/{id}/password")
-    public ResponseEntity<User> updatePassword(@PathVariable String id, @RequestBody String newPassword) {
+    public ResponseEntity<User> updatePassword(@PathVariable String id, @RequestBody Map<String, String> request) {
+        String newPassword = request.get("password");
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
         User updatedUser = userService.updatePassword(id, newPassword);
         return ResponseEntity.ok(updatedUser);
     }
