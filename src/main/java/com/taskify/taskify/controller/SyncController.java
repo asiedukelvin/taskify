@@ -30,31 +30,31 @@ public class SyncController {
     }
 
     @PutMapping()
-    public ResponseEntity<?> syncTaskLists(@RequestBody List<TaskList> taskLists) {
+    public ResponseEntity<?> syncTaskLists(@RequestBody List<TaskListWithTasks> taskLists) {
         try {
-            for (TaskList list : taskLists) {
-                // Save or update TaskList
-                taskListService.create(list); // your service already does upsert
+            for (TaskListWithTasks list : taskLists) {
+                TaskList baseList = list.getTaskList();
 
-                // Nuke old tasks tied to this list
-                List<Task> existing = taskService.getByList(list.getId());
+                taskListService.create(baseList); // upsert
+
+                List<Task> existing = taskService.getByList(baseList.getId());
                 for (Task task : existing) {
                     taskService.delete(task.getId());
                 }
 
-                // Save new tasks (if present)
                 if (list.getTasks() != null) {
                     for (Task task : list.getTasks()) {
-                        task.setTaskListId(list.getId());
+                        task.setTaskListId(baseList.getId());
                         taskService.create(task);
                     }
                 }
             }
+
             return ResponseEntity.ok("Sync complete");
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Something broke and it’s probably your fault.");
+            return ResponseEntity.internalServerError().body("Something broke and yeah, probably your payload.");
         }
     }
 
