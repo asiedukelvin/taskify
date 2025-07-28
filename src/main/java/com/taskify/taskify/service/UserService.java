@@ -17,11 +17,11 @@ import com.taskify.taskify.repository.UserRepository;
 @Service
 public class UserService {
     private final UserRepository userRepo;
-    private final SecurityConfig passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final JWTUtility jwtUtil;
 
 
-    public UserService(UserRepository userRepo, SecurityConfig passwordEncoder, JWTUtility jwtUtil) {
+    public UserService(UserRepository userRepo, BCryptPasswordEncoder passwordEncoder, JWTUtility jwtUtil) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -32,7 +32,7 @@ public class UserService {
             throw new IllegalArgumentException("User with email already exists.");
         }
         String rawPassword = user.getPassword();
-        String hashedPassword = passwordEncoder.passwordEncoder().encode(rawPassword);
+        String hashedPassword = passwordEncoder.encode(rawPassword);
         user.setPassword(hashedPassword);
         System.out.println("Created user: " + user.getEmail());
         return userRepo.save(user);
@@ -40,7 +40,7 @@ public class UserService {
 
     public User loginUser(String email, String rawPassword) {
         User user = userRepo.findByEmail(email);
-        if (user == null || !passwordEncoder.passwordEncoder().matches(rawPassword, user.getPassword())) {
+        if (user == null || !passwordEncoder.matches(rawPassword, user.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
         Map<String, Object> claims = new HashMap<>();
@@ -97,7 +97,7 @@ public class UserService {
         user.setProfilePic(newUserData.getProfilePic());
 
         if (newUserData.getPassword() != null && !newUserData.getPassword().isBlank()) {
-            String hashedPassword = passwordEncoder.passwordEncoder().encode(newUserData.getPassword());
+            String hashedPassword = passwordEncoder.encode(newUserData.getPassword());
             user.setPassword(hashedPassword);
         }
 
@@ -109,7 +109,7 @@ public class UserService {
     public User updatePassword(String userId, String newRawPassword) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setPassword(passwordEncoder.passwordEncoder().encode(newRawPassword));
+        user.setPassword(passwordEncoder.encode(newRawPassword));
         return userRepo.save(user);
     }
 
